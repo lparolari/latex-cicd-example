@@ -1,19 +1,14 @@
-sudo: required
-language: generic
-services: docker
-
+before_install:
+- sudo apt-get update && sudo apt-get install --no-install-recommends texlive-fonts-recommended
+  texlive-latex-extra texlive-fonts-extra texlive-latex-recommended dvipng
 script:
-  # We use the docker image from https://hub.docker.com/r/dxjoke/tectonic-docker/
-  - docker pull dxjoke/tectonic-docker
-  # Compiling only main.tex:
-  - docker run --mount src=$TRAVIS_BUILD_DIR/src,target=/usr/src/tex,type=bind dxjoke/tectonic-docker /bin/sh -c "tectonic thesis.tex"
-  # Compiling multiple files as well as using biber:
-#  - docker run --mount src=$TRAVIS_BUILD_DIR/src,target=/usr/src/tex,type=bind dxjoke/tectonic-docker /bin/sh -c "tectonic --keep-intermediates --reruns 0 biber-mwe.tex; biber biber-mwe; tectonic biber-mwe.tex; tectonic main.tex"
+- mkdir _build
+- pdflatex -output-directory _build thesis.tex
 deploy:
   provider: releases
   api_key:
     secure: penV3RlMfuS93Zvyfic2jyFcTFIo7KzZ9nS6ruXCJReOouJyAKn5M8uZ4tAaQ6EgCWcgt0zuLj+DllDQ9y2bvzy5r3yJrMAgdbP+/kcIiRBHloAhsyxvDBWcXt0m4usmuybtM9mR3lyuq4KEXHQ5UBalaRA0yrJfULhs7Ixv/oNhauXaLRyajW6RkV33M3eTzwbdauLiWiiuB84m2t44zqfxKhzVBsyO9FtsxzaBsBnYfENkbHKHRLwckrpzP1Bte23wgqpVRGAVdSZj5j4/j0gGx/wQ2c9enHnoXW8kW3QR+y3eTFDIIZvrOENv4TLX6JD5jhQr+4A/TcC1LA6S5CT5ewMFmw9uyROWqCMVPHaWX5uupYw356DBBdKR2Y/y2sfVOBooIzXkuf+sLFEh4MAPIvJg///J6Z8Xx59Ed7OeTBdCVWqonan+t5qhyjTncP9WXtP5ajUt9wyIfQbSJvcpsfvSaWtf6NIY3FVzGyWEN+fYtThSLxlnjOkHwHFZNwpQT1pexOmnmrqF8mzaI3LL/DsuyB8C3m64tVjEwLpjii3kVHADTEWEf34892Zz0+3o2fesx9DVvpiIpHOe3RG9mJkvqiNPRe6bluEgSClxk7LEKx60ydRUve/spa9ai+W1B0JR8Qn0wHsuL+/pJBKFh/9k5jokRm31OaauWwk=
-  file: $TRAVIS_BUILD_DIR/thesis.pdf
+  file: _build/thesis.pdf
   skip_cleanup: true
 #  on:
 #    tags: true
